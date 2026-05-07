@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MagicByte Docs</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(
+        135deg,
+        #dbeafe,
+        #f8fafc
+      );
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(148,163,184,0.2);
+    }
+
+    .editor {
+      min-height: 700px;
+      outline: none;
+      line-height: 1.8;
+      font-size: 17px;
+    }
+
+    .editor h1 {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .toolbar-btn {
+      transition: all 0.2s ease;
+    }
+
+    .toolbar-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body class="text-slate-800">
+
+  <div class="max-w-7xl mx-auto p-6">
+
+    <!-- TOP BAR -->
+
+    <div class="glass rounded-3xl p-5 shadow-xl mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+      <div class="flex items-center gap-4">
+
+        <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+          D
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-bold">
+            MagicByte Docs
+          </h1>
+
+          <p class="text-slate-500 mt-1">
+            Cloud document workspace
+          </p>
+        </div>
+
+      </div>
+
+      <div class="flex items-center gap-3 flex-wrap">
+
+        <button
+          id="saveBtn"
+          class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl font-semibold toolbar-btn"
+        >
+          Save Document
+        </button>
+
+        <button
+          class="bg-slate-200 hover:bg-slate-300 px-5 py-3 rounded-xl font-semibold toolbar-btn"
+        >
+          Share
+        </button>
+
+        <button
+          id="logoutBtn"
+          class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-xl font-semibold toolbar-btn"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- TOOLBAR -->
+
+    <div class="glass rounded-3xl p-4 shadow-xl mb-6 flex flex-wrap gap-3">
+
+      <button onclick="format('bold')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-bold">
+        B
+      </button>
+
+      <button onclick="format('italic')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl italic">
+        I
+      </button>
+
+      <button onclick="format('underline')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl underline">
+        U
+      </button>
+
+      <button onclick="format('insertUnorderedList')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        • List
+      </button>
+
+      <button onclick="format('justifyLeft')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Left
+      </button>
+
+      <button onclick="format('justifyCenter')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Center
+      </button>
+
+      <button onclick="format('justifyRight')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Right
+      </button>
+
+    </div>
+
+    <!-- DOCUMENT AREA -->
+
+    <div class="glass rounded-3xl shadow-2xl overflow-hidden">
+
+      <div class="border-b border-slate-200 p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+        <input
+          id="docTitle"
+          type="text"
+          value="Untitled Document"
+          class="text-2xl font-bold bg-transparent outline-none"
+        />
+
+        <div class="flex items-center gap-3 text-sm text-slate-500">
+
+          <div class="bg-green-100 text-green-700 px-4 py-2 rounded-xl font-semibold">
+            Autosave Enabled
+          </div>
+
+          <div id="saveStatus">
+            Ready
+          </div>
+
+        </div>
+
+      </div>
+
+      <div
+        id="editor"
+        class="editor p-10 bg-white"
+        contenteditable="true"
+      >
+        <h1>Welcome to MagicByte Docs</h1>
+
+        <p>
+          This is your secure cloud-based document workspace.
+        </p>
+
+        <p>
+          Start typing here to create documents, collaborate with your team, and save files directly to your MagicByte Cloud account.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- RECENT FILES -->
+
+    <div class="glass rounded-3xl p-6 shadow-xl mt-6">
+
+      <div class="flex items-center justify-between mb-6">
+
+        <div>
+          <h2 class="text-2xl font-bold">
+            Recent Documents
+          </h2>
+
+          <p class="text-slate-500 mt-1">
+            Cloud synchronized workspace files
+          </p>
+        </div>
+
+      </div>
+
+      <div class="space-y-4">
+
+        <div class="bg-slate-100 rounded-2xl p-5 flex items-center justify-between">
+
+          <div>
+            <div class="font-bold">
+              Quarterly Report.docx
+            </div>
+
+            <div class="text-sm text-slate-500 mt-1">
+              Modified 2 hours ago
+            </div>
+          </div>
+
+          <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold">
+            Open
+          </button>
+
+        </div>
+
+        <div class="bg-slate-100 rounded-2xl p-5 flex items-center justify-between">
+
+          <div>
+            <div class="font-bold">
+              Team Planning Notes.docx
+            </div>
+
+            <div class="text-sm text-slate-500 mt-1">
+              Modified yesterday
+            </div>
+          </div>
+
+          <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold">
+            Open
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module">
+
+    import { createClient }
+    from "https://esm.sh/@supabase/supabase-js@2"
+
+    // ============================================
+    // SUPABASE CONFIG
+    // ============================================
+
+    const SUPABASE_URL = "https://jihpgbsghatuwwkacsur.supabase.co"
+
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk"
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    )
+
+    // ============================================
+    // SECURE ACCESS CHECK
+    // ============================================
+
+    async function secureDocs() {
+
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+
+      // BLOCK DIRECT ACCESS
+      if (!session) {
+
+        window.location.href =
+          "index.html?auth=required"
+
+        return
+      }
+
+      // VALIDATE TOKEN
+      const token = session.access_token
+
+      const { data, error } =
+        await supabase.auth.getUser(token)
+
+      if (error || !data.user) {
+
+        await supabase.auth.signOut()
+
+        window.location.href =
+          "index.html?session=expired"
+      }
+
+      console.log(
+        "MagicByte Docs authenticated:",
+        session.user.email
+      )
+    }
+
+    secureDocs()
+
+    // ============================================
+    // TEXT EDITOR FORMATTING
+    // ============================================
+
+    window.format = function(command) {
+      document.execCommand(command, false, null)
+    }
+
+    // ============================================
+    // SAVE DOCUMENT
+    // ============================================
+
+    const saveBtn =
+      document.getElementById("saveBtn")
+
+    const saveStatus =
+      document.getElementById("saveStatus")
+
+    saveBtn.addEventListener("click", async () => {
+
+      saveStatus.textContent =
+        "Saving..."
+
+      const title =
+        document.getElementById("docTitle").value
+
+      const content =
+        document.getElementById("editor").innerHTML
+
+      console.log(
+        "Document saved:",
+        title,
+        content
+      )
+
+      // FUTURE:
+      // SAVE TO SUPABASE DATABASE
+
+      setTimeout(() => {
+
+        saveStatus.textContent =
+          "Saved successfully"
+
+      }, 1000)
+    })
+
+    // ============================================
+    // AUTOSAVE SIMULATION
+    // ============================================
+
+    setInterval(() => {
+
+      saveStatus.textContent =
+        "Autosaved"
+
+    }, 15000)
+
+    // ============================================
+    // LOGOUT
+    // ============================================
+
+    document
+      .getElementById("logoutBtn")
+      .addEventListener("click", async () => {
+
+        await supabase.auth.signOut()
+
+        window.location.href =
+          "index.html"
+      })
+
+    // ============================================
+    // LIVE SESSION MONITORING
+    // ============================================
+
+    supabase.auth.onAuthStateChange((event, session) => {
+
+      if (!session) {
+
+        window.location.href =
+          "index.html?auth=required"
+      }
+    })
+
+  </script>
+
+</body>
+</html>
