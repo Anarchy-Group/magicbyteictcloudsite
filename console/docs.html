@@ -48,9 +48,9 @@
   </style>
 </head>
 
-<body class="text-slate-800">
+<body class="text-slate-800 print:bg-white">
 
-  <div class="max-w-7xl mx-auto p-6">
+  <div class="max-w-[1700px] mx-auto p-6">
 
     <!-- TOP BAR -->
 
@@ -68,13 +68,20 @@
           </h1>
 
           <p class="text-slate-500 mt-1">
-            Cloud document workspace
+            Professional cloud productivity suite
           </p>
         </div>
 
       </div>
 
       <div class="flex items-center gap-3 flex-wrap">
+
+        <button
+          id="exportBtn"
+          class="bg-green-600 hover:bg-green-500 text-white px-5 py-3 rounded-xl font-semibold toolbar-btn"
+        >
+          Export DOCX
+        </button>
 
         <button
           id="saveBtn"
@@ -102,7 +109,37 @@
 
     <!-- TOOLBAR -->
 
-    <div class="glass rounded-3xl p-4 shadow-xl mb-6 flex flex-wrap gap-3">
+    <div class="glass rounded-3xl p-4 shadow-xl mb-6 space-y-4">
+
+      <div class="flex flex-wrap gap-3 items-center border-b border-slate-200 pb-4">
+
+        <button class="toolbar-btn bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold">
+          File
+        </button>
+
+        <button class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+          Edit
+        </button>
+
+        <button class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+          View
+        </button>
+
+        <button class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+          Insert
+        </button>
+
+        <button class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+          Format
+        </button>
+
+        <button class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+          Tools
+        </button>
+
+      </div>
+
+      <div class="flex flex-wrap gap-3 items-center">
 
       <button onclick="format('bold')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-bold">
         B
@@ -132,6 +169,51 @@
         Right
       </button>
 
+    <select class="bg-slate-100 rounded-xl px-4 py-2 outline-none">
+        <option>Arial</option>
+        <option>Inter</option>
+        <option>Times New Roman</option>
+      </select>
+
+      <select class="bg-slate-100 rounded-xl px-4 py-2 outline-none">
+        <option>11</option>
+        <option selected>14</option>
+        <option>18</option>
+        <option>24</option>
+      </select>
+
+      <button onclick="format('formatBlock','h1')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold">
+        Heading
+      </button>
+
+      <button onclick="format('insertOrderedList')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Numbered List
+      </button>
+
+      <button onclick="format('undo')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Undo
+      </button>
+
+      <button onclick="format('redo')" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Redo
+      </button>
+
+      <button onclick="insertTable()" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Table
+      </button>
+
+      <button onclick="insertImage()" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Image
+      </button>
+
+      <button onclick="openComments()" class="toolbar-btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl">
+        Comments
+      </button>
+
+      <button onclick="openAI()" class="toolbar-btn bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-xl">
+        AI Assistant
+      </button>
+
     </div>
 
     <!-- DOCUMENT AREA -->
@@ -150,7 +232,7 @@
         <div class="flex items-center gap-3 text-sm text-slate-500">
 
           <div class="bg-green-100 text-green-700 px-4 py-2 rounded-xl font-semibold">
-            Autosave Enabled
+            Realtime Autosave Enabled
           </div>
 
           <div id="saveStatus">
@@ -163,8 +245,9 @@
 
       <div
         id="editor"
-        class="editor p-10 bg-white"
+        class="editor p-16 bg-white max-w-5xl mx-auto shadow-inner"
         contenteditable="true"
+        spellcheck="true"
       >
         <h1>Welcome to MagicByte Docs</h1>
 
@@ -179,6 +262,109 @@
 
     </div>
 
+    <!-- COLLABORATION AREA -->
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+
+      <div class="glass rounded-3xl p-6 shadow-xl">
+
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-bold">
+            Live Collaboration
+          </h2>
+
+          <div class="bg-green-100 text-green-700 px-3 py-2 rounded-xl text-sm font-semibold">
+            Realtime Active
+          </div>
+        </div>
+
+        <div class="space-y-4">
+
+          <div class="flex items-center gap-3 bg-slate-100 rounded-2xl p-4">
+            <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+              A
+            </div>
+
+            <div>
+              <div class="font-semibold">Ari</div>
+              <div class="text-sm text-slate-500">
+                Editing page 1
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 bg-slate-100 rounded-2xl p-4">
+            <div class="w-10 h-10 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold">
+              T
+            </div>
+
+            <div>
+              <div class="font-semibold">Team Member</div>
+              <div class="text-sm text-slate-500">
+                Viewing document
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="glass rounded-3xl p-6 shadow-xl">
+
+        <h2 class="text-2xl font-bold mb-4">
+          Version History
+        </h2>
+
+        <div class="space-y-4">
+
+          <div class="bg-slate-100 rounded-2xl p-4">
+            <div class="font-semibold">
+              Current Version
+            </div>
+
+            <div class="text-sm text-slate-500 mt-1">
+              Autosaved just now
+            </div>
+          </div>
+
+          <div class="bg-slate-100 rounded-2xl p-4">
+            <div class="font-semibold">
+              Version 1.8
+            </div>
+
+            <div class="text-sm text-slate-500 mt-1">
+              Edited 12 minutes ago
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="glass rounded-3xl p-6 shadow-xl">
+
+        <h2 class="text-2xl font-bold mb-4">
+          AI Writing Assistant
+        </h2>
+
+        <textarea
+          id="aiPrompt"
+          placeholder="Ask AI to rewrite, summarize, or improve your document..."
+          class="w-full h-40 border border-slate-300 rounded-2xl p-4 outline-none resize-none"
+        ></textarea>
+
+        <button
+          id="aiBtn"
+          class="w-full mt-4 bg-violet-600 hover:bg-violet-500 text-white rounded-2xl py-3 font-semibold"
+        >
+          Generate Suggestions
+        </button>
+
+      </div>
+
+    </div>
+
     <!-- RECENT FILES -->
 
     <div class="glass rounded-3xl p-6 shadow-xl mt-6">
@@ -187,11 +373,11 @@
 
         <div>
           <h2 class="text-2xl font-bold">
-            Recent Documents
+            Workspace Documents
           </h2>
 
           <p class="text-slate-500 mt-1">
-            Cloud synchronized workspace files
+            Recent files from your secure workspace
           </p>
         </div>
 
@@ -304,9 +490,98 @@
     // TEXT EDITOR FORMATTING
     // ============================================
 
-    window.format = function(command) {
-      document.execCommand(command, false, null)
+    window.format = function(command, value = null) {
+      document.execCommand(command, false, value)
     }
+
+    // ============================================
+    // DOCX EXPORT
+    // ============================================
+
+    document
+      .getElementById("exportBtn")
+      .addEventListener("click", () => {
+
+        alert(
+          "DOCX export integration ready. Connect docx.js or OnlyOffice later."
+        )
+      })
+
+    // ============================================
+    // TABLE SUPPORT
+    // ============================================
+
+    window.insertTable = function() {
+
+      const table = `
+        <table border="1" style="width:100%;border-collapse:collapse;margin-top:20px;">
+          <tr>
+            <th style="padding:10px;">Header 1</th>
+            <th style="padding:10px;">Header 2</th>
+          </tr>
+          <tr>
+            <td style="padding:10px;">Cell</td>
+            <td style="padding:10px;">Cell</td>
+          </tr>
+        </table>
+      `
+
+      document.execCommand(
+        "insertHTML",
+        false,
+        table
+      )
+    }
+
+    // ============================================
+    // IMAGE SUPPORT
+    // ============================================
+
+    window.insertImage = function() {
+
+      const url = prompt(
+        "Enter image URL"
+      )
+
+      if (!url) return
+
+      document.execCommand(
+        "insertImage",
+        false,
+        url
+      )
+    }
+
+    // ============================================
+    // COMMENTS
+    // ============================================
+
+    window.openComments = function() {
+
+      alert(
+        "Collaborative comments panel coming soon."
+      )
+    }
+
+    // ============================================
+    // AI ASSISTANT
+    // ============================================
+
+    window.openAI = function() {
+
+      document
+        .getElementById("aiPrompt")
+        .focus()
+    }
+
+    document
+      .getElementById("aiBtn")
+      .addEventListener("click", () => {
+
+        alert(
+          "AI assistant integration ready for OpenAI API."
+        )
+      })
 
     // ============================================
     // SAVE DOCUMENT
