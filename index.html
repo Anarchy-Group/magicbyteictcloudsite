@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MagicByte ICT Cloud</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 55%);
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Inter, sans-serif;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .glow {
+      box-shadow: 0 0 40px rgba(59,130,246,0.12);
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-6 text-slate-800">
+
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute w-96 h-96 bg-blue-300/30 blur-3xl rounded-full top-[-80px] left-[-80px]"></div>
+    <div class="absolute w-96 h-96 bg-cyan-300/30 blur-3xl rounded-full bottom-[-120px] right-[-80px]'></div>
+  </div>
+
+  <div class="glass glow floating relative z-10 w-full max-w-md rounded-3xl p-8 shadow-2xl">
+
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-500 flex items-center justify-center text-3xl font-bold shadow-lg shadow-blue-500/40 mb-4">
+        M
+      </div>
+
+      <h1 class="text-3xl font-bold">MagicByte ICT Cloud</h1>
+      <p class="text-slate-500 mt-2">
+        Secure business cloud portal
+      </p>
+    </div>
+
+    <div class="space-y-5">
+
+      <div>
+        <label class="text-sm text-slate-300 block mb-2">
+          Business Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="business@example.com"
+          class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-slate-300 block mb-2">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+        />
+      </div>
+
+      <button
+        id="loginBtn"
+        class="w-full bg-blue-600 hover:bg-blue-500 transition rounded-xl py-3 font-semibold shadow-lg shadow-blue-500/30"
+      >
+        Sign In
+      </button>
+
+      <button
+        id="registerBtn"
+        class="w-full bg-slate-200 hover:bg-slate-300 transition rounded-xl py-3 font-semibold text-slate-800"
+      >
+        Create Business Account
+      </button>
+
+      <div id="status" class="text-center text-sm text-slate-400"></div>
+
+    </div>
+
+    <div class="mt-8 text-center text-xs text-slate-400">
+      © 2026 MagicByte ICT Cloud
+    </div>
+  </div>
+
+  <script type="module">
+
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    // ============================================
+    // SUPABASE CONFIG
+    // ============================================
+
+    const SUPABASE_URL = 'https://jihpgbsghatuwwkacsur.supabase.co/rest/v1/'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk'
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    )
+
+    // ============================================
+    // ELEMENTS
+    // ============================================
+
+    const emailInput = document.getElementById('email')
+    const passwordInput = document.getElementById('password')
+    const loginBtn = document.getElementById('loginBtn')
+    const registerBtn = document.getElementById('registerBtn')
+    const statusBox = document.getElementById('status')
+
+    // ============================================
+    // STATUS MESSAGE
+    // ============================================
+
+    function setStatus(message, isError = false) {
+      statusBox.textContent = message
+      statusBox.style.color = isError
+        ? '#f87171'
+        : '#94a3b8'
+    }
+
+    // ============================================
+    // LOGIN FUNCTION
+    // ============================================
+
+    async function login() {
+
+      const email = emailInput.value.trim()
+      const password = passwordInput.value.trim()
+
+      if (!email || !password) {
+        setStatus('Please enter email and password', true)
+        return
+      }
+
+      setStatus('Signing in...')
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        setStatus(error.message, true)
+        return
+      }
+
+      setStatus('Login successful! Redirecting...')
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html'
+      }, 1000)
+    }
+
+    // ============================================
+    // REGISTER FUNCTION
+    // ============================================
+
+    async function register() {
+
+      const email = emailInput.value.trim()
+      const password = passwordInput.value.trim()
+
+      if (!email || !password) {
+        setStatus('Please enter email and password', true)
+        return
+      }
+
+      if (password.length < 8) {
+        setStatus('Password must be at least 8 characters', true)
+        return
+      }
+
+      setStatus('Creating business account...')
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      })
+
+      if (error) {
+        setStatus(error.message, true)
+        return
+      }
+
+      setStatus('Business account created successfully!')
+    }
+
+    // ============================================
+    // SESSION CHECK
+    // ============================================
+
+    async function checkSession() {
+
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+
+      if (session) {
+        window.location.href = 'dashboard.html'
+      }
+    }
+
+    checkSession()
+
+    // ============================================
+    // BUTTON EVENTS
+    // ============================================
+
+    loginBtn.addEventListener('click', login)
+    registerBtn.addEventListener('click', register)
+
+    // ============================================
+    // ENTER KEY SUPPORT
+    // ============================================
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        login()
+      }
+    })
+
+  </script>
+
+</body>
+
+
+
+</html>
