@@ -126,6 +126,10 @@
       .getElementById("registerBtn")
       .addEventListener("click", register)
 
+    document
+      .getElementById("resetBtn")
+      .addEventListener("click", resetPassword)
+
     function setStatus(msg, error = false) {
       status.textContent = msg
       status.style.color =
@@ -181,6 +185,41 @@
       setStatus("Account created!")
     }
 
+    async function resetPassword() {
+
+  const email =
+    emailInput.value.trim()
+
+  if (!email) {
+
+    setStatus(
+      "Enter your business email first",
+      true
+    )
+
+    return
+  }
+
+  const { error } =
+    await supabase.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo:
+          window.location.origin +
+          "/reset.html"
+      }
+    )
+
+  if (error) {
+
+    setStatus(error.message, true)
+    return
+  }
+
+  setStatus(
+    "Password reset email sent!"
+  )
+}
   </script>
 
 </body>
