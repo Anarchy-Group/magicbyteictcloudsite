@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MagicByte ICT Cloud Dashboard</title>
+  <title>MagicByte ICT Cloud Portal</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -41,7 +41,7 @@
         </h1>
 
         <p class="text-slate-500 mt-1">
-          Secure business dashboard
+          Secure business cloud portal
         </p>
       </div>
 
@@ -96,9 +96,9 @@
 
     </div>
 
-    <!-- MAIN PANELS -->
+    <!-- CLOUD PORTAL PANELS -->
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <div class="glass rounded-3xl p-6 shadow-xl">
 
@@ -156,6 +156,104 @@
 
       </div>
 
+      <div class="glass rounded-3xl p-6 shadow-xl">
+
+        <h2 class="text-2xl font-bold mb-4">
+          Cloud Services
+        </h2>
+
+        <div class="space-y-4">
+
+          <div class="flex items-center justify-between bg-slate-100 rounded-2xl p-4">
+            <div>
+              <div class="font-semibold">Virtual Machines</div>
+              <div class="text-sm text-slate-500">Manage cloud servers</div>
+            </div>
+
+            <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl">
+              Open
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-100 rounded-2xl p-4">
+            <div>
+              <div class="font-semibold">Cloud Storage</div>
+              <div class="text-sm text-slate-500">Secure business file storage</div>
+            </div>
+
+            <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl">
+              Open
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-100 rounded-2xl p-4">
+            <div>
+              <div class="font-semibold">Business Backups</div>
+              <div class="text-sm text-slate-500">Automated cloud backups</div>
+            </div>
+
+            <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl">
+              Open
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+
+    <div class="glass rounded-3xl p-6 shadow-xl mt-6">
+
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">
+          Recent Activity
+        </h2>
+
+        <span class="text-sm text-green-600 font-semibold">
+          Live Monitoring Enabled
+        </span>
+      </div>
+
+      <div class="space-y-4">
+
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div>
+            <div class="font-semibold">Successful Login</div>
+            <div class="text-sm text-slate-500">Business portal authentication completed</div>
+          </div>
+
+          <div class="text-sm text-slate-400">
+            Just now
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div>
+            <div class="font-semibold">Cloud Sync Complete</div>
+            <div class="text-sm text-slate-500">All business data synchronized</div>
+          </div>
+
+          <div class="text-sm text-slate-400">
+            5 mins ago
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">Security Check Passed</div>
+            <div class="text-sm text-slate-500">2FA and token verification active</div>
+          </div>
+
+          <div class="text-sm text-slate-400">
+            15 mins ago
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
@@ -188,9 +286,9 @@
         data: { session }
       } = await supabase.auth.getSession()
 
-      // NO SESSION = REDIRECT
+      // NO SESSION = REDIRECT TO LOGIN
       if (!session) {
-        window.location.href = "index.html"
+        window.location.href = "index.html?auth=required"
         return
       }
 
@@ -213,7 +311,7 @@
 
       if (error || !data.user) {
         await supabase.auth.signOut()
-        window.location.href = "index.html"
+        window.location.href = "index.html?auth=required"
       }
     }
 
@@ -228,7 +326,7 @@
 
         await supabase.auth.signOut()
 
-        window.location.href = "index.html"
+        window.location.href = "index.html?auth=required"
       })
 
     // ============================================
@@ -238,7 +336,7 @@
     supabase.auth.onAuthStateChange((event, session) => {
 
       if (!session) {
-        window.location.href = "index.html"
+        window.location.href = "index.html?auth=required"
       }
     })
 
