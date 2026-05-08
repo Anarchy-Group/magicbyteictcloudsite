@@ -13,80 +13,386 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<link
-  href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css"
-  rel="stylesheet"
-/>
-
-<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-
 <style>
 
 body {
   background: #f1f5f9;
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
 
-#editor-container {
-  height: 700px;
+.topbar {
+
+  background: white;
+
+  padding: 20px 30px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 100;
 }
 
-.ql-editor {
+.toolbar {
+
+  background: white;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  padding: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  position: sticky;
+
+  top: 81px;
+
+  z-index: 99;
+}
+
+.toolbar-btn {
+
+  min-width: 38px;
+
+  height: 38px;
+
+  border-radius: 10px;
+
+  border: 1px solid #e2e8f0;
+
+  background: white;
+
+  transition: 0.2s;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+.toolbar-btn:hover {
+
+  background: #f1f5f9;
+}
+
+.toolbar-select {
+
+  height: 38px;
+
+  border-radius: 10px;
+
+  border: 1px solid #e2e8f0;
+
+  padding: 0 10px;
+
+  background: white;
+}
+
+.toolbar-color {
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  background: none;
+
+  cursor: pointer;
+}
+
+.divider {
+
+  width: 1px;
+
+  height: 24px;
+
+  background: #e2e8f0;
+
+  margin: 0 4px;
+}
+
+.document-wrapper {
+
+  max-width: 1100px;
+
+  margin: 40px auto;
+}
+
+.document-page {
+
+  background: white;
+
+  min-height: 1200px;
+
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.08);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+}
+
+#editor {
+
+  min-height: 1200px;
+
+  padding: 80px;
+
+  outline: none;
+
   font-size: 18px;
+
   line-height: 1.8;
-  padding: 60px;
+}
+
+#editor img {
+
+  max-width: 100%;
+
+  border-radius: 12px;
+
+  margin: 20px 0;
+}
+
+@media print {
+
+  .topbar,
+  .toolbar {
+
+    display: none;
+  }
+
+  body {
+
+    background: white;
+  }
+
+  .document-page {
+
+    box-shadow: none;
+  }
+
+  #editor {
+
+    padding: 0;
+  }
 }
 
 </style>
 
 </head>
 
-<body class="p-6">
+<body>
 
-<div class="max-w-7xl mx-auto">
+<!-- TOPBAR -->
 
-  <!-- TOP -->
+<div class="topbar">
 
-  <div class="bg-white rounded-3xl shadow-xl p-6 mb-6 flex items-center justify-between">
+  <div>
 
-    <div>
+    <h1 class="text-3xl font-bold">
+      MagicByte Docs
+    </h1>
 
-      <h1 class="text-3xl font-bold">
-        MagicByte Docs
-      </h1>
-
-      <p class="text-slate-500 mt-1">
-        Professional cloud workspace
-      </p>
-
-    </div>
-
-    <div class="flex gap-3">
-
-      <button
-        id="saveBtn"
-        class="bg-blue-600 text-white px-5 py-3 rounded-xl font-semibold"
-      >
-        Save
-      </button>
-
-      <button
-        id="logoutBtn"
-        class="bg-red-500 text-white px-5 py-3 rounded-xl font-semibold"
-      >
-        Logout
-      </button>
-
-    </div>
+    <p class="text-slate-500 mt-1">
+      Professional cloud workspace
+    </p>
 
   </div>
 
-  <!-- QUILL -->
+  <div class="flex gap-3">
 
-  <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+    <button
+      onclick="saveDocument()"
+      class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl font-semibold"
+    >
+      Save
+    </button>
 
-    <div id="editor-container"></div>
+    <button
+      onclick="loadDocument()"
+      class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold"
+    >
+      Open
+    </button>
+
+    <button
+      onclick="window.print()"
+      class="bg-slate-500 hover:bg-slate-400 text-white px-5 py-3 rounded-xl font-semibold"
+    >
+      Print
+    </button>
+
+  </div>
+
+</div>
+
+<!-- TOOLBAR -->
+
+<div class="toolbar">
+
+  <!-- FONT -->
+
+  <select
+    class="toolbar-select"
+    onchange="changeFont(this.value)"
+  >
+
+    <option value="Arial">
+      Arial
+    </option>
+
+    <option value="Verdana">
+      Verdana
+    </option>
+
+    <option value="Tahoma">
+      Tahoma
+    </option>
+
+    <option value="Georgia">
+      Georgia
+    </option>
+
+    <option value="Courier New">
+      Courier
+    </option>
+
+  </select>
+
+  <div class="divider"></div>
+
+  <!-- TEXT STYLE -->
+
+  <button
+    class="toolbar-btn font-bold"
+    onclick="document.execCommand('bold')"
+  >
+    B
+  </button>
+
+  <button
+    class="toolbar-btn italic"
+    onclick="document.execCommand('italic')"
+  >
+    I
+  </button>
+
+  <button
+    class="toolbar-btn underline"
+    onclick="document.execCommand('underline')"
+  >
+    U
+  </button>
+
+  <div class="divider"></div>
+
+  <!-- HIGHLIGHT -->
+
+  <input
+    type="color"
+    class="toolbar-color"
+    onchange="highlightText(this.value)"
+  >
+
+  <div class="divider"></div>
+
+  <!-- ALIGN -->
+
+  <button
+    class="toolbar-btn"
+    onclick="document.execCommand('justifyLeft')"
+  >
+    ⬅
+  </button>
+
+  <button
+    class="toolbar-btn"
+    onclick="document.execCommand('justifyCenter')"
+  >
+    ☰
+  </button>
+
+  <button
+    class="toolbar-btn"
+    onclick="document.execCommand('justifyRight')"
+  >
+    ➡
+  </button>
+
+  <div class="divider"></div>
+
+  <!-- LISTS -->
+
+  <button
+    class="toolbar-btn"
+    onclick="document.execCommand('insertUnorderedList')"
+  >
+    •
+  </button>
+
+  <button
+    class="toolbar-btn"
+    onclick="document.execCommand('insertOrderedList')"
+  >
+    1.
+  </button>
+
+  <div class="divider"></div>
+
+  <!-- IMAGE -->
+
+  <button
+    class="toolbar-btn"
+    onclick="insertImage()"
+  >
+    🖼️
+  </button>
+
+</div>
+
+<!-- DOCUMENT -->
+
+<div class="document-wrapper">
+
+  <div class="document-page">
+
+    <div
+      id="editor"
+      contenteditable="true"
+      spellcheck="true"
+    >
+
+      <h1>
+        Welcome to MagicByte Docs
+      </h1>
+
+      <p>
+        Start writing here...
+      </p>
+
+    </div>
 
   </div>
 
@@ -94,161 +400,181 @@ body {
 
 <script>
 
-const SUPABASE_URL =
-  "YOUR_SUPABASE_URL"
+const editor =
+  document.getElementById('editor')
 
-const SUPABASE_ANON_KEY =
-  "YOUR_SUPABASE_ANON_KEY"
+// ============================================
+// FONT FAMILY
+// ============================================
 
-const supabase =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
+function changeFont(font) {
+
+  document.execCommand(
+    'fontName',
+    false,
+    font
   )
-
-// ============================================
-// QUILL
-// ============================================
-
-const quill = new Quill(
-  '#editor-container',
-  {
-    theme: 'snow',
-
-    placeholder:
-      'Start writing your document...',
-
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, false] }],
-
-        ['bold', 'italic', 'underline'],
-
-        [
-          { list: 'ordered' },
-          { list: 'bullet' }
-        ],
-
-        ['image'],
-
-        ['clean']
-      ]
-    }
-  }
-)
-
-// ============================================
-// AUTH
-// ============================================
-
-async function securePage() {
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-
-    window.location.href =
-      'index.html'
-
-    return
-  }
-
-  loadDocument(session.user.id)
 }
 
-securePage()
+// ============================================
+// HIGHLIGHT
+// ============================================
+
+function highlightText(color) {
+
+  document.execCommand(
+    'styleWithCSS',
+    false,
+    true
+  )
+
+  document.execCommand(
+    'hiliteColor',
+    false,
+    color
+  )
+}
 
 // ============================================
-// SAVE
+// IMAGE
+// ============================================
+
+function insertImage() {
+
+  const url =
+    prompt('Enter image URL')
+
+  if (!url) return
+
+  document.execCommand(
+    'insertImage',
+    false,
+    url
+  )
+}
+
+// ============================================
+// SAVE DOCUMENT
 // ============================================
 
 async function saveDocument() {
 
-  const {
-    data: { session }
-  } = await supabase.auth.getSession()
+  try {
 
-  const content =
-    quill.root.innerHTML
+    const documentData = {
 
-  const { error } =
-    await supabase
-      .from('documents')
-      .insert({
-        user_id: session.user.id,
-        title: 'Untitled Document',
-        content: content
+      type: 'MagicByteDocument',
+
+      version: 1,
+
+      created:
+        new Date().toISOString(),
+
+      content:
+        document.getElementById(
+          'editor'
+        ).innerHTML
+    }
+
+    const fileHandle =
+      await window.showSaveFilePicker({
+
+        suggestedName:
+          'document.mbdocx',
+
+        types: [
+
+          {
+
+            description:
+              'MagicByte Document',
+
+            accept: {
+
+              'application/x-mbdocx': [
+                '.mbdocx'
+              ]
+            }
+          }
+        ]
       })
 
-  if (error) {
+    const writable =
+      await fileHandle.createWritable()
 
-    alert(error.message)
-    return
-  }
+    await writable.write(
 
-  console.log('Saved!')
-}
+      JSON.stringify(
+        documentData,
+        null,
+        2
+      )
+    )
 
-document
-  .getElementById('saveBtn')
-  .addEventListener(
-    'click',
-    saveDocument
-  )
+    await writable.close()
 
-// ============================================
-// LOAD
-// ============================================
+    alert(
+      'Document saved successfully!'
+    )
 
-async function loadDocument(userId) {
+  } catch (err) {
 
-  const { data } =
-    await supabase
-      .from('documents')
-      .select('*')
-      .eq('user_id', userId)
-      .limit(1)
+    console.error(err)
 
-  if (
-    data &&
-    data.length > 0
-  ) {
-
-    quill.root.innerHTML =
-      data[0].content
+    alert(
+      'Save cancelled or unsupported browser.'
+    )
   }
 }
 
 // ============================================
-// AUTOSAVE
+// LOAD DOCUMENT
 // ============================================
 
-setInterval(() => {
+function loadDocument() {
 
-  saveDocument()
+  const input =
+    document.createElement('input')
 
-}, 30000)
+  input.type = 'file'
 
-// ============================================
-// LOGOUT
-// ============================================
+  input.accept = '.mbdocx'
 
-async function logout() {
+  input.onchange = e => {
 
-  await supabase.auth.signOut()
+    const file =
+      e.target.files[0]
 
-  window.location.href =
-    'index.html'
+    if (!file) return
+
+    const reader =
+      new FileReader()
+
+    reader.onload = event => {
+
+      try {
+
+        const data =
+          JSON.parse(
+            event.target.result
+          )
+
+        editor.innerHTML =
+          data.content || ''
+
+      } catch {
+
+        alert(
+          'Invalid .mbdocx file'
+        )
+      }
+    }
+
+    reader.readAsText(file)
+  }
+
+  input.click()
 }
-
-document
-  .getElementById('logoutBtn')
-  .addEventListener(
-    'click',
-    logout
-  )
 
 </script>
 
