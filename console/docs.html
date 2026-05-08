@@ -13,6 +13,10 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 
 body {
@@ -244,6 +248,13 @@ body {
       Print
     </button>
 
+    <button
+      onclick="logout()"
+      class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-xl font-semibold"
+    >
+      Logout
+    </button>
+
   </div>
 
 </div>
@@ -400,6 +411,62 @@ body {
 
 <script>
 
+// ============================================
+// SUPABASE
+// ============================================
+
+const SUPABASE_URL =
+  'https://jihpgbsghatuwwkacsur.supabase.co'
+
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk'
+
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  )
+
+// ============================================
+// AUTH CHECK
+// ============================================
+
+async function checkAuth() {
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+
+  if (!session) {
+
+    window.location.href =
+      'login.html'
+
+    return
+  }
+
+  console.log(
+    'Logged in as:',
+    session.user.email
+  )
+}
+
+// ============================================
+// LOGOUT
+// ============================================
+
+async function logout() {
+
+  await supabase.auth.signOut()
+
+  window.location.href =
+    'login.html'
+}
+
+// ============================================
+// EDITOR
+// ============================================
+
 const editor =
   document.getElementById('editor')
 
@@ -471,9 +538,7 @@ async function saveDocument() {
         new Date().toISOString(),
 
       content:
-        document.getElementById(
-          'editor'
-        ).innerHTML
+        editor.innerHTML
     }
 
     const fileHandle =
@@ -575,6 +640,12 @@ function loadDocument() {
 
   input.click()
 }
+
+// ============================================
+// START
+// ============================================
+
+checkAuth()
 
 </script>
 
