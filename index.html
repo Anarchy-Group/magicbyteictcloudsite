@@ -28,11 +28,6 @@
 />
 
 <meta
-  name="google-site-verification"
-  content="o1AbWUrUn2kX21Z6CIVduraYz-PPP_cuRfilbBGP0kc"
-/>
-
-<meta
   property="og:title"
   content="MagicByte ICT Cloud -- Logon System"
 />
@@ -180,7 +175,7 @@ body {
       Create Account
     </button>
 
-    <!-- RESET PASSWORD -->
+    <!-- RESET -->
 
     <button
       id="resetBtn"
@@ -248,7 +243,7 @@ const status =
   )
 
 // ============================================
-// BUTTONS
+// BUTTON EVENTS
 // ============================================
 
 document
@@ -291,6 +286,17 @@ function setStatus(
 }
 
 // ============================================
+// GET CAPTCHA TOKEN
+// ============================================
+
+function getCaptchaToken() {
+
+  return document.querySelector(
+    '[name="cf-turnstile-response"]'
+  )?.value
+}
+
+// ============================================
 // LOGIN
 // ============================================
 
@@ -304,17 +310,11 @@ async function login() {
 
     passwordInput.value.trim()
 
-  // ============================================
-  // TURNSTILE
-  // ============================================
+  const captchaToken =
 
-  const turnstileToken =
+    getCaptchaToken()
 
-    document.querySelector(
-      '[name="cf-turnstile-response"]'
-    )?.value
-
-  if (!turnstileToken) {
+  if (!captchaToken) {
 
     setStatus(
       "Complete the security check",
@@ -324,17 +324,18 @@ async function login() {
     return
   }
 
-  // ============================================
-  // LOGIN
-  // ============================================
-
   const { error } =
 
     await supabase.auth
       .signInWithPassword({
 
         email,
-        password
+        password,
+
+        options: {
+
+          captchaToken
+        }
       })
 
   if (error) {
@@ -374,13 +375,32 @@ async function register() {
 
     passwordInput.value.trim()
 
+  const captchaToken =
+
+    getCaptchaToken()
+
+  if (!captchaToken) {
+
+    setStatus(
+      "Complete the security check",
+      true
+    )
+
+    return
+  }
+
   const { error } =
 
     await supabase.auth
       .signUp({
 
         email,
-        password
+        password,
+
+        options: {
+
+          captchaToken
+        }
       })
 
   if (error) {
