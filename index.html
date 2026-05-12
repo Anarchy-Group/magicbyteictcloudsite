@@ -1,201 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MagicByte ICT Cloud</title>
-  <link rel="icon" href="/console/magicbyteictcloudicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" href="/console/magicbyteictcloudlogo.png">
-  <meta name="theme-color" content="#0F52BA">
-  <meta name="google-site-verification" content="o1AbWUrUn2kX21Z6CIVduraYz-PPP_cuRfilbBGP0kc" />
-  <meta property="og:title" content="MagicByte ICT Cloud -- Logon System">
-  <meta property="og:description" content="Affordable IT support, repairs, and solutions for homes and businesses in the UK.">
-  <meta property="og:image" content="/console/magicbyteictcloudlogo.png">
-  <meta property="og:url" content="https://cloud.ict.magicplum.co.uk/">
-  <meta property="og:type" content="website">
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(
-        135deg,
-        #dbeafe,
-        #f8fafc
-      );
-    }
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
 
-    .glass {
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(148,163,184,0.2);
-    }
-  </style>
+<title>MagicByte ICT Cloud</title>
+
+<link
+  rel="icon"
+  href="/console/magicbyteictcloudicon.ico"
+  type="image/x-icon"
+/>
+
+<link
+  rel="apple-touch-icon"
+  href="/console/magicbyteictcloudlogo.png"
+/>
+
+<meta
+  name="theme-color"
+  content="#0F52BA"
+/>
+
+<meta
+  name="google-site-verification"
+  content="o1AbWUrUn2kX21Z6CIVduraYz-PPP_cuRfilbBGP0kc"
+/>
+
+<meta
+  property="og:title"
+  content="MagicByte ICT Cloud -- Logon System"
+/>
+
+<meta
+  property="og:description"
+  content="Affordable IT support, repairs, and solutions for homes and businesses in the UK."
+/>
+
+<meta
+  property="og:image"
+  content="/console/magicbyteictcloudlogo.png"
+/>
+
+<meta
+  property="og:url"
+  content="https://cloud.ict.magicplum.co.uk/"
+/>
+
+<meta
+  property="og:type"
+  content="website"
+/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- CLOUDFLARE TURNSTILE -->
+
+<script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  async
+  defer
+></script>
+
+<style>
+
+body {
+
+  margin: 0;
+
+  min-height: 100vh;
+
+  font-family: Arial, sans-serif;
+
+  background: linear-gradient(
+    135deg,
+    #dbeafe,
+    #f8fafc
+  );
+}
+
+.glass {
+
+  background:
+    rgba(255,255,255,0.85);
+
+  backdrop-filter:
+    blur(18px);
+
+  border:
+    1px solid rgba(
+      148,
+      163,
+      184,
+      0.2
+    );
+}
+
+</style>
+
 </head>
 
 <body class="flex items-center justify-center p-6">
 
-  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl">
+<div
+  class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl"
+>
 
-    <div class="text-center mb-8">
+  <!-- HEADER -->
 
-      <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-500 flex items-center justify-center text-3xl font-bold text-white mb-4">
-        M
-      </div>
+  <div class="text-center mb-8">
 
-      <h1 class="text-3xl font-bold text-slate-800">
-        MagicByte ICT Cloud
-      </h1>
-
-      <p class="text-slate-500 mt-2">
-        Secure business portal
-      </p>
-
+    <div
+      class="w-20 h-20 mx-auto rounded-2xl bg-blue-500 flex items-center justify-center text-3xl font-bold text-white mb-4"
+    >
+      M
     </div>
 
-    <div class="space-y-4">
+    <h1
+      class="text-3xl font-bold text-slate-800"
+    >
+      MagicByte ICT Cloud
+    </h1>
 
-      <input
-        id="email"
-        type="email"
-        placeholder="Business Email"
-        class="w-full border border-slate-300 rounded-xl px-4 py-3"
-      >
-
-      <input
-        id="password"
-        type="password"
-        placeholder="Password"
-        class="w-full border border-slate-300 rounded-xl px-4 py-3"
-      >
-
-      <button
-        id="loginBtn"
-        class="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-3 font-semibold"
-      >
-        Sign In
-      </button>
-
-      <button
-        id="registerBtn"
-        class="w-full bg-slate-200 hover:bg-slate-300 rounded-xl py-3 font-semibold"
-      >
-        Create Account
-      </button>
-      <button
-        id="resetBtn"
-        class="w-full border border-slate-300 hover:bg-slate-100 rounded-xl py-3 font-semibold transition"
-      >
-        Reset Password
-      </button>
-
-      <div
-        id="status"
-        class="text-center text-sm text-slate-500"
-      ></div>
-
-    </div>
+    <p class="text-slate-500 mt-2">
+      Secure business portal
+    </p>
 
   </div>
 
-  <script type="module">
+  <!-- FORM -->
 
-    import { createClient }
-    from "https://esm.sh/@supabase/supabase-js@2"
+  <div class="space-y-4">
 
-    const SUPABASE_URL =
-      "https://jihpgbsghatuwwkacsur.supabase.co"
+    <!-- EMAIL -->
 
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk"
+    <input
+      id="email"
+      type="email"
+      placeholder="Business Email"
+      class="w-full border border-slate-300 rounded-xl px-4 py-3"
+    >
 
-    const supabase = createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    )
+    <!-- PASSWORD -->
 
-    const emailInput =
-      document.getElementById("email")
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      class="w-full border border-slate-300 rounded-xl px-4 py-3"
+    >
 
-    const passwordInput =
-      document.getElementById("password")
+    <!-- TURNSTILE -->
 
-    const status =
-      document.getElementById("status")
+    <div
+      class="cf-turnstile"
+      data-sitekey="0x4AAAAAADNnFr82houxfuum"
+    ></div>
 
-    document
-      .getElementById("loginBtn")
-      .addEventListener("click", login)
+    <!-- LOGIN -->
 
-    document
-      .getElementById("registerBtn")
-      .addEventListener("click", register)
+    <button
+      id="loginBtn"
+      class="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-3 font-semibold"
+    >
+      Sign In
+    </button>
 
-    document
-      .getElementById("resetBtn")
-      .addEventListener("click", resetPassword)
+    <!-- REGISTER -->
 
-    function setStatus(msg, error = false) {
-      status.textContent = msg
-      status.style.color =
-        error ? "red" : "#64748b"
-    }
+    <button
+      id="registerBtn"
+      class="w-full bg-slate-200 hover:bg-slate-300 rounded-xl py-3 font-semibold"
+    >
+      Create Account
+    </button>
 
-    async function login() {
+    <!-- RESET PASSWORD -->
 
-      const email =
-        emailInput.value.trim()
+    <button
+      id="resetBtn"
+      class="w-full border border-slate-300 hover:bg-slate-100 rounded-xl py-3 font-semibold transition"
+    >
+      Reset Password
+    </button>
 
-      const password =
-        passwordInput.value.trim()
+    <!-- STATUS -->
 
-      const { error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        })
+    <div
+      id="status"
+      class="text-center text-sm text-slate-500"
+    ></div>
 
-      if (error) {
-        setStatus(error.message, true)
-        return
-      }
+  </div>
 
-      setStatus("Login successful!")
+</div>
 
-      setTimeout(() => {
-        window.location.href =
-          "dashboard.html"
-      }, 1000)
-    }
+<script type="module">
 
-    async function register() {
+// ============================================
+// SUPABASE
+// ============================================
 
-      const email =
-        emailInput.value.trim()
+import { createClient }
 
-      const password =
-        passwordInput.value.trim()
+from "https://esm.sh/@supabase/supabase-js@2"
 
-      const { error } =
-        await supabase.auth.signUp({
-          email,
-          password
-        })
+const SUPABASE_URL =
 
-      if (error) {
-        setStatus(error.message, true)
-        return
-      }
+  "https://jihpgbsghatuwwkacsur.supabase.co"
 
-      setStatus("Account created!")
-    }
+const SUPABASE_ANON_KEY =
 
-    async function resetPassword() {
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk"
+
+const supabase =
+
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  )
+
+// ============================================
+// ELEMENTS
+// ============================================
+
+const emailInput =
+
+  document.getElementById(
+    "email"
+  )
+
+const passwordInput =
+
+  document.getElementById(
+    "password"
+  )
+
+const status =
+
+  document.getElementById(
+    "status"
+  )
+
+// ============================================
+// BUTTONS
+// ============================================
+
+document
+  .getElementById("loginBtn")
+  .addEventListener(
+    "click",
+    login
+  )
+
+document
+  .getElementById("registerBtn")
+  .addEventListener(
+    "click",
+    register
+  )
+
+document
+  .getElementById("resetBtn")
+  .addEventListener(
+    "click",
+    resetPassword
+  )
+
+// ============================================
+// STATUS
+// ============================================
+
+function setStatus(
+  msg,
+  error = false
+) {
+
+  status.textContent = msg
+
+  status.style.color =
+
+    error
+      ? "red"
+      : "#64748b"
+}
+
+// ============================================
+// LOGIN
+// ============================================
+
+async function login() {
 
   const email =
+
+    emailInput.value.trim()
+
+  const password =
+
+    passwordInput.value.trim()
+
+  // ============================================
+  // TURNSTILE
+  // ============================================
+
+  const turnstileToken =
+
+    document.querySelector(
+      '[name="cf-turnstile-response"]'
+    )?.value
+
+  if (!turnstileToken) {
+
+    setStatus(
+      "Complete the security check",
+      true
+    )
+
+    return
+  }
+
+  // ============================================
+  // LOGIN
+  // ============================================
+
+  const { error } =
+
+    await supabase.auth
+      .signInWithPassword({
+
+        email,
+        password
+      })
+
+  if (error) {
+
+    setStatus(
+      error.message,
+      true
+    )
+
+    return
+  }
+
+  setStatus(
+    "Login successful!"
+  )
+
+  setTimeout(() => {
+
+    window.location.href =
+
+      "dashboard.html"
+
+  }, 1000)
+}
+
+// ============================================
+// REGISTER
+// ============================================
+
+async function register() {
+
+  const email =
+
+    emailInput.value.trim()
+
+  const password =
+
+    passwordInput.value.trim()
+
+  const { error } =
+
+    await supabase.auth
+      .signUp({
+
+        email,
+        password
+      })
+
+  if (error) {
+
+    setStatus(
+      error.message,
+      true
+    )
+
+    return
+  }
+
+  setStatus(
+    "Account created!"
+  )
+}
+
+// ============================================
+// RESET PASSWORD
+// ============================================
+
+async function resetPassword() {
+
+  const email =
+
     emailInput.value.trim()
 
   if (!email) {
@@ -209,18 +419,27 @@
   }
 
   const { error } =
-    await supabase.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo:
-          window.location.origin +
-          "/reset.html"
-      }
-    )
+
+    await supabase.auth
+      .resetPasswordForEmail(
+
+        email,
+
+        {
+          redirectTo:
+
+            window.location.origin +
+            "/reset.html"
+        }
+      )
 
   if (error) {
 
-    setStatus(error.message, true)
+    setStatus(
+      error.message,
+      true
+    )
+
     return
   }
 
@@ -228,7 +447,8 @@
     "Password reset email sent!"
   )
 }
-  </script>
+
+</script>
 
 </body>
 </html>
