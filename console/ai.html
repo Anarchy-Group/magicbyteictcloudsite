@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magicbyte ICT — AI Assistant</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── CONFIG BANNER ─────────────────────────────────────── */
+    :root {
+      --brand-navy:    #0D1B2A;
+      --brand-blue:    #1A6EBD;
+      --brand-blue-lt: #E8F2FB;
+      --brand-slate:   #3D5068;
+      --brand-line:    #D8DFE8;
+      --brand-bg:      #F4F6F9;
+      --brand-white:   #FFFFFF;
+      --brand-text:    #0D1B2A;
+      --brand-muted:   #5E7391;
+      --brand-success: #1B7F4F;
+      --brand-danger:  #C0392B;
+      --brand-ai-bg:   #EFF4FB;
+      --brand-user-bg: #FFFFFF;
+      --radius-sm:  6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--brand-bg);
+      color: var(--brand-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── AUTH SCREEN ───────────────────────────────────────── */
+    #auth-screen {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .auth-card {
+      background: var(--brand-white);
+      border: 1px solid var(--brand-line);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2.25rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 2px 16px rgba(13,27,42,0.07);
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.75rem;
+    }
+
+    .auth-logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--brand-navy);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-logo-icon svg { width: 22px; height: 22px; }
+
+    .auth-logo-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--brand-navy);
+      letter-spacing: -0.02em;
+    }
+
+    .auth-logo-sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--brand-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .auth-heading {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--brand-navy);
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-sub {
+      font-size: 14px;
+      color: var(--brand-muted);
+      margin-bottom: 1.75rem;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand-slate);
+      margin-bottom: 5px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--brand-line);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--brand-text);
+      background: var(--brand-white);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 3px rgba(26,110,189,0.12);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background: var(--brand-navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover { background: var(--brand-blue); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .auth-toggle {
+      text-align: center;
+      font-size: 13px;
+      color: var(--brand-muted);
+      margin-top: 1.25rem;
+    }
+
+    .auth-toggle a {
+      color: var(--brand-blue);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .auth-error {
+      background: #FEF0EF;
+      color: var(--brand-danger);
+      border: 1px solid #F5C6C3;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      padding: 9px 12px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .auth-error.visible { display: block; }
+
+    /* ─── APP SHELL ─────────────────────────────────────────── */
+    #app-screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: var(--brand-navy);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 56px;
+      flex-shrink: 0;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-brand-icon {
+      width: 30px;
+      height: 30px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topbar-brand-icon svg { width: 18px; height: 18px; }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar-tag {
+      font-size: 10px;
+      font-weight: 500;
+      background: var(--brand-blue);
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-user {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .btn-logout {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-logout:hover { background: rgba(255,255,255,0.18); }
+
+    /* Layout */
+    .app-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: var(--brand-white);
+      border-right: 1px solid var(--brand-line);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--brand-muted);
+      margin-bottom: 0.6rem;
+      padding: 0 6px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      color: var(--brand-slate);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      user-select: none;
+    }
+
+    .sidebar-item:hover { background: var(--brand-bg); color: var(--brand-navy); }
+    .sidebar-item.active { background: var(--brand-blue-lt); color: var(--brand-blue); font-weight: 500; }
+
+    .sidebar-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .sidebar-item.active .sidebar-dot { opacity: 1; }
+
+    .sidebar-divider {
+      border: none;
+      border-top: 1px solid var(--brand-line);
+      margin: 1rem 0;
+    }
+
+    .model-select-wrap {
+      margin-top: auto;
+      padding-top: 1rem;
+    }
+
+    .model-select-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--brand-muted);
+      margin-bottom: 6px;
+      padding: 0 2px;
+    }
+
+    .model-select-wrap select {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid var(--brand-line);
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-family: inherit;
+      color: var(--brand-text);
+      background: var(--brand-white);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .model-select-wrap select:focus { border-color: var(--brand-blue); }
+
+    /* Chat area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Character intro banner */
+    .char-banner {
+      background: var(--brand-blue-lt);
+      border-bottom: 1px solid #C9DDF2;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .char-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--brand-navy);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .char-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brand-navy);
+    }
+
+    .char-desc {
+      font-size: 12.5px;
+      color: var(--brand-slate);
+      line-height: 1.4;
+    }
+
+    .char-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 500;
+      background: rgba(26,110,189,0.12);
+      color: var(--brand-blue);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* Messages */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .msg {
+      display: flex;
+      gap: 10px;
+      max-width: 780px;
+    }
+
+    .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+    .msg.ai   { align-self: flex-start; }
+
+    .msg-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .msg.ai   .msg-avatar { background: var(--brand-navy); color: #fff; }
+    .msg.user .msg-avatar { background: var(--brand-blue-lt); color: var(--brand-blue); }
+
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 640px;
+      white-space: pre-wrap;
+    }
+
+    .msg.ai   .msg-bubble { background: var(--brand-ai-bg); border: 1px solid #D2E3F5; color: var(--brand-text); }
+    .msg.user .msg-bubble { background: var(--brand-navy); color: #fff; }
+
+    .msg-time {
+      font-size: 11px;
+      color: var(--brand-muted);
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    .msg.user .msg-time { text-align: right; }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--brand-ai-bg);
+      border: 1px solid #D2E3F5;
+      border-radius: var(--radius-md);
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      animation: typing-bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30%            { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* Input row */
+    .chat-input-row {
+      padding: 1rem 1.5rem 1.25rem;
+      background: var(--brand-white);
+      border-top: 1px solid var(--brand-line);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-textarea {
+      flex: 1;
+      border: 1px solid var(--brand-line);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-family: inherit;
+      padding: 10px 13px;
+      resize: none;
+      outline: none;
+      max-height: 140px;
+      min-height: 42px;
+      color: var(--brand-text);
+      transition: border-color 0.15s;
+    }
+
+    .chat-textarea:focus { border-color: var(--brand-blue); box-shadow: 0 0 0 3px rgba(26,110,189,0.1); }
+
+    .send-btn {
+      background: var(--brand-navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .send-btn:hover { background: var(--brand-blue); }
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .send-btn svg { width: 18px; height: 18px; }
+
+    /* Config notice */
+    .config-notice {
+      background: #FFF8EC;
+      border: 1px solid #FFD980;
+      border-radius: var(--radius-sm);
+      color: #7A5000;
+      font-size: 12.5px;
+      padding: 8px 12px;
+      margin: 0 1.5rem 0.75rem;
+      display: none;
+    }
+
+    .config-notice.visible { display: block; }
+
+    /* Scrollbar */
+    .messages::-webkit-scrollbar { width: 5px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--brand-line); border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <!-- Magicbyte "MB" mark -->
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="8" height="8" rx="1.5" fill="#1A6EBD"/>
+          <rect x="12" y="2" width="8" height="8" rx="1.5" fill="white" opacity="0.5"/>
+          <rect x="2" y="12" width="8" height="8" rx="1.5" fill="white" opacity="0.5"/>
+          <rect x="12" y="12" width="8" height="8" rx="1.5" fill="#1A6EBD" opacity="0.7"/>
+        </svg>
+      </div>
+      <div>
+        <span class="auth-logo-name">Magicbyte ICT</span>
+        <span class="auth-logo-sub">AI Assistant Portal</span>
+      </div>
+    </div>
+
+    <h1 class="auth-heading" id="auth-title">Sign in to continue</h1>
+    <p class="auth-sub" id="auth-subtitle">Access is restricted to authorised Magicbyte ICT users.</p>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+
+    <div class="field" id="password-field">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <div class="field" id="confirm-field" style="display:none">
+      <label for="confirm">Confirm password</label>
+      <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" />
+    </div>
+
+    <button class="btn-primary" id="auth-btn">Sign in</button>
+
+    <div class="auth-toggle" id="auth-toggle">
+      Don't have an account? <a id="toggle-link">Create one</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="app-screen">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-brand-icon">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="8" height="8" rx="1.5" fill="#1A6EBD"/>
+          <rect x="12" y="2" width="8" height="8" rx="1.5" fill="white" opacity="0.5"/>
+          <rect x="2" y="12" width="8" height="8" rx="1.5" fill="white" opacity="0.5"/>
+          <rect x="12" y="12" width="8" height="8" rx="1.5" fill="#1A6EBD" opacity="0.7"/>
+        </svg>
+      </div>
+      <span class="topbar-title">Magicbyte ICT</span>
+      <span class="topbar-tag">AI</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topbar-email"></span>
+      <button class="btn-logout" id="logout-btn">Sign out</button>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="app-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section-label">Conversations</div>
+      <div class="sidebar-item active" id="new-chat-btn">
+        <div class="sidebar-dot"></div>
+        New conversation
+      </div>
+
+      <hr class="sidebar-divider" />
+
+      <div class="sidebar-section-label">Byte can help with</div>
+      <div class="sidebar-item" onclick="insertPrompt('Can you explain our IT infrastructure options?')">
+        <div class="sidebar-dot"></div> IT infrastructure
+      </div>
+      <div class="sidebar-item" onclick="insertPrompt('What cybersecurity best practices do you recommend?')">
+        <div class="sidebar-dot"></div> Cybersecurity
+      </div>
+      <div class="sidebar-item" onclick="insertPrompt('Help me troubleshoot a network issue.')">
+        <div class="sidebar-dot"></div> Network support
+      </div>
+      <div class="sidebar-item" onclick="insertPrompt('What cloud solutions does Magicbyte ICT offer?')">
+        <div class="sidebar-dot"></div> Cloud solutions
+      </div>
+      <div class="sidebar-item" onclick="insertPrompt('Can you help me draft a technical proposal?')">
+        <div class="sidebar-dot"></div> Technical writing
+      </div>
+
+      <div class="model-select-wrap">
+        <div class="model-select-label">Model</div>
+        <select id="model-select">
+          <option value="google/gemini-flash-1.5">Gemini Flash 1.5 (free)</option>
+          <option value="meta-llama/llama-3.1-8b-instruct:free">Llama 3.1 8B (free)</option>
+          <option value="mistralai/mistral-7b-instruct:free">Mistral 7B (free)</option>
+          <option value="microsoft/phi-3-mini-128k-instruct:free">Phi-3 Mini (free)</option>
+          <option value="qwen/qwen-2-7b-instruct:free">Qwen2 7B (free)</option>
+        </select>
+      </div>
+    </aside>
+
+    <!-- Chat -->
+    <main class="chat-area">
+
+      <!-- Character banner -->
+      <div class="char-banner">
+        <div class="char-avatar">🤖</div>
+        <div>
+          <div class="char-name">Byte — Magicbyte ICT AI Assistant</div>
+          <div class="char-desc">Your in-house ICT specialist. Ask me anything about technology, infrastructure, cybersecurity, or how Magicbyte ICT can support your business.</div>
+        </div>
+        <div class="char-badge">Online</div>
+      </div>
+
+      <!-- Config notice -->
+      <div class="config-notice" id="config-notice">
+        ⚠️ OpenRouter API key not configured. Open the page source and replace <code>YOUR_OPENROUTER_API_KEY</code> to enable live AI responses.
+      </div>
+
+      <!-- Messages -->
+      <div class="messages" id="messages">
+        <!-- Initial greeting injected by JS -->
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-row">
+        <textarea
+          class="chat-textarea"
+          id="chat-input"
+          rows="1"
+          placeholder="Ask Byte anything about ICT…"
+        ></textarea>
+        <button class="send-btn" id="send-btn" aria-label="Send">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 2.5L9.17 10.83M17.5 2.5L12.5 17.5L9.17 10.83L2.5 7.5L17.5 2.5Z"
+              stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════
+//  !! CONFIGURATION — fill these in before deploying !!
+// ═════════════════════════════════════════════════════════════
+const SUPABASE_URL    = 'https://jihpgbsghatuwwkacsur.supabase.co';          // e.g. https://xxxx.supabase.co
+const SUPABASE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaHBnYnNnaGF0dXd3a2Fjc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzkxNzcsImV4cCI6MjA5MzcxNTE3N30.qH7iso7t2zoOLi0C68DiUKZecyIDhlxVcJAcNhYLHTk';     // from Project Settings → API
+const OPENROUTER_KEY  = '';    // from openrouter.ai → Keys
+// ═════════════════════════════════════════════════════════════
+
+const SITE_URL = window.location.href;
+
+// ── Supabase client ──────────────────────────────────────────
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── DOM refs ─────────────────────────────────────────────────
+const authScreen    = document.getElementById('auth-screen');
+const appScreen     = document.getElementById('app-screen');
+const authTitle     = document.getElementById('auth-title');
+const authSubtitle  = document.getElementById('auth-subtitle');
+const authBtn       = document.getElementById('auth-btn');
+const authError     = document.getElementById('auth-error');
+const toggleLink    = document.getElementById('toggle-link');
+const confirmField  = document.getElementById('confirm-field');
+const emailInput    = document.getElementById('email');
+const passInput     = document.getElementById('password');
+const confirmInput  = document.getElementById('confirm');
+const topbarEmail   = document.getElementById('topbar-email');
+const logoutBtn     = document.getElementById('logout-btn');
+const messagesEl    = document.getElementById('messages');
+const chatInput     = document.getElementById('chat-input');
+const sendBtn       = document.getElementById('send-btn');
+const modelSelect   = document.getElementById('model-select');
+const configNotice  = document.getElementById('config-notice');
+const newChatBtn    = document.getElementById('new-chat-btn');
+
+// ── State ─────────────────────────────────────────────────────
+let isSignUp = false;
+let history  = [];   // [{role, content}]
+
+// ── Auth mode toggle ──────────────────────────────────────────
+toggleLink.addEventListener('click', () => {
+  isSignUp = !isSignUp;
+  authTitle.textContent    = isSignUp ? 'Create your account' : 'Sign in to continue';
+  authSubtitle.textContent = isSignUp
+    ? 'Set up your Magicbyte ICT portal access.'
+    : 'Access is restricted to authorised Magicbyte ICT users.';
+  authBtn.textContent      = isSignUp ? 'Create account' : 'Sign in';
+  toggleLink.textContent   = isSignUp ? 'Sign in instead' : 'Create one';
+  confirmField.style.display = isSignUp ? '' : 'none';
+  hideError();
+});
+
+// ── Auth submit ───────────────────────────────────────────────
+authBtn.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  const pass  = passInput.value;
+  const conf  = confirmInput.value;
+
+  hideError();
+  if (!email || !pass) return showError('Please fill in all fields.');
+  if (isSignUp && pass !== conf) return showError('Passwords do not match.');
+
+  authBtn.disabled = true;
+  authBtn.textContent = isSignUp ? 'Creating account…' : 'Signing in…';
+
+  try {
+    let result;
+    if (isSignUp) {
+      result = await supabase.auth.signUp({ email, password: pass });
+      if (result.error) throw result.error;
+      // If email confirmation is required, tell the user
+      if (result.data.user && !result.data.session) {
+        showError('Check your email to confirm your account before signing in.', true);
+        authBtn.disabled = false;
+        authBtn.textContent = 'Create account';
+        return;
+      }
+    } else {
+      result = await supabase.auth.signInWithPassword({ email, password: pass });
+      if (result.error) throw result.error;
+    }
+    // onAuthStateChange will handle the rest
+  } catch (err) {
+    showError(err.message || 'Authentication failed. Please try again.');
+    authBtn.disabled = false;
+    authBtn.textContent = isSignUp ? 'Create account' : 'Sign in';
+  }
+});
+
+// Allow Enter key on password field to submit
+[emailInput, passInput, confirmInput].forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') authBtn.click(); });
+});
+
+// ── Supabase session listener ─────────────────────────────────
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    showApp(session.user);
+  } else {
+    showAuth();
+  }
+});
+
+// ── Show / hide screens ───────────────────────────────────────
+function showApp(user) {
+  authScreen.style.display  = 'none';
+  appScreen.style.display   = 'flex';
+  topbarEmail.textContent   = user.email;
+
+  if (OPENROUTER_KEY === 'YOUR_OPENROUTER_API_KEY') {
+    configNotice.classList.add('visible');
+  }
+
+  // Greet if first load
+  if (history.length === 0) initGreeting(user.email);
+}
+
+function showAuth() {
+  authScreen.style.display = 'flex';
+  appScreen.style.display  = 'none';
+  authBtn.disabled = false;
+  authBtn.textContent = 'Sign in';
+  history = [];
+}
+
+// ── Logout ────────────────────────────────────────────────────
+logoutBtn.addEventListener('click', async () => {
+  await supabase.auth.signOut();
+});
+
+// ── New chat ──────────────────────────────────────────────────
+newChatBtn.addEventListener('click', () => {
+  history = [];
+  messagesEl.innerHTML = '';
+  const session = supabase.auth.getSession();
+  session.then(({ data }) => {
+    if (data.session) initGreeting(data.session.user.email);
+  });
+});
+
+// ── Greeting ──────────────────────────────────────────────────
+function initGreeting(email) {
+  const name = email.split('@')[0];
+  const greeting = `Hey ${name} 👋 — I'm Byte, Magicbyte ICT's AI specialist.\n\nI'm here to help you with anything ICT-related: infrastructure advice, cybersecurity guidance, network troubleshooting, cloud solutions, software recommendations, or drafting technical documents.\n\nWhat can I sort out for you today?`;
+  appendMessage('ai', greeting);
+  history.push({ role: 'assistant', content: greeting });
+}
+
+// ── Send message ──────────────────────────────────────────────
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+});
+
+async function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+  appendMessage('user', text);
+  history.push({ role: 'user', content: text });
+
+  sendBtn.disabled = true;
+  const typingEl = showTyping();
+
+  try {
+    const reply = await callOpenRouter(history);
+    typingEl.remove();
+    appendMessage('ai', reply);
+    history.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    typingEl.remove();
+    appendMessage('ai', `⚠️ Something went wrong: ${err.message}`);
+  } finally {
+    sendBtn.disabled = false;
+    chatInput.focus();
+  }
+}
+
+// ── OpenRouter API call ───────────────────────────────────────
+const SYSTEM_PROMPT = `You are Byte, the AI assistant for Magicbyte ICT — a professional ICT solutions company.
+
+Your character:
+- You speak with confidence and expertise, but remain approachable and friendly.
+- You are deeply knowledgeable about IT infrastructure, networking, cybersecurity, cloud computing, hardware, software, Microsoft 365, managed services, and general business technology.
+- You represent Magicbyte ICT professionally in every interaction — think of yourself as a senior ICT consultant on the team.
+- You use clear, plain English without unnecessary jargon unless the user is clearly technical.
+- You are proactive: if you spot a potential issue or a better approach, you mention it.
+- You keep responses focused and practical. You don't waffle.
+- If asked about pricing or specific contracts, you acknowledge you don't have that live data and suggest they contact the Magicbyte ICT team directly.
+- Never claim to be ChatGPT, Claude, Gemini, or any other AI brand. You are Byte from Magicbyte ICT.
+
+Always aim to be the most helpful, knowledgeable ICT colleague a user could ask for.`;
+
+async function callOpenRouter(messages) {
+  const model = modelSelect.value;
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': SITE_URL,
+      'X-Title': 'Magicbyte ICT AI Assistant'
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...messages
+      ],
+      max_tokens: 1024,
+      temperature: 0.65
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content?.trim() || 'No response received.';
+}
+
+// ── UI helpers ────────────────────────────────────────────────
+function appendMessage(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'ai' ? 'B' : '👤';
+
+  const inner = document.createElement('div');
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+
+  const time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+  inner.appendChild(bubble);
+  inner.appendChild(time);
+
+  if (role === 'ai') {
+    wrap.appendChild(avatar);
+    wrap.appendChild(inner);
+  } else {
+    wrap.appendChild(inner);
+    wrap.appendChild(avatar);
+  }
+
+  messagesEl.appendChild(wrap);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ai';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = 'B';
+
+  const ind = document.createElement('div');
+  ind.className = 'typing-indicator';
+  ind.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
+  wrap.appendChild(avatar);
+  wrap.appendChild(ind);
+  messagesEl.appendChild(wrap);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return wrap;
+}
+
+function showError(msg, isInfo = false) {
+  authError.textContent = msg;
+  authError.style.background = isInfo ? '#EFF9F4' : '#FEF0EF';
+  authError.style.color       = isInfo ? '#1B7F4F' : '#C0392B';
+  authError.style.borderColor = isInfo ? '#A8DFC8' : '#F5C6C3';
+  authError.classList.add('visible');
+}
+
+function hideError() {
+  authError.classList.remove('visible');
+}
+
+// ── Sidebar prompt shortcuts ──────────────────────────────────
+function insertPrompt(text) {
+  chatInput.value = text;
+  chatInput.focus();
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+}
+</script>
+</body>
+</html>
